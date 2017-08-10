@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: dealofday-service
+  labels:
+    app: dealofday-service
+    visualize: "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dealofday-service
+      serving: "true"
+  template:
+    metadata:
+      labels:
+        app: dealofday-service
+        version: "latest"
+        serving: "true"
+        visualize: "true"
+      annotations:
+        visualizer/uses: mysql
+    spec:
+      containers:
+      - name: guestbook-service
+        image: saturnism/guestbook-service:latest
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+        ports:
+        - name: http
+          containerPort: 8080
